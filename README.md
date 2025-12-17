@@ -19,11 +19,11 @@ AI 翻譯工具，使用 Claude 將中文翻譯為英文。支援批次翻譯、
 ### 使用 uv（推薦）
 
 ```bash
-# 作為 Git submodule 加入專案
-git submodule add https://github.com/Cleanstation/ai-translator.git tools/ai-translator
+# 作為 Git submodule 加入專案（放在專案根目錄）
+git submodule add https://github.com/Cleanstation/ai-translator.git ai-translator
 
 # 執行
-cd tools/ai-translator
+cd ai-translator
 uv run ai-translator "測試"
 ```
 

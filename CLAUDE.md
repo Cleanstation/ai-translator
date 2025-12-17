@@ -40,8 +40,8 @@ ai-translator/
 ### 作為 Git Submodule
 
 ```bash
-git submodule add https://github.com/Cleanstation/ai-translator.git tools/ai-translator
-cd tools/ai-translator && uv run ai-translator "測試"
+git submodule add https://github.com/Cleanstation/ai-translator.git ai-translator
+cd ai-translator && uv run ai-translator "測試"
 ```
 
 ### 作為 Python 模組
