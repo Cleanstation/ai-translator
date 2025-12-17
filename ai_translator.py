@@ -150,29 +150,78 @@ class Translator:
         self.cache = TranslationCache(cache_dir)
 
     def _load_context(self, context: Optional[str], context_file: Optional[Path]) -> Optional[str]:
-        """載入 context"""
+        """載入 context
+
+        自動搜尋順序：
+        1. 直接提供的 context 字串
+        2. 指定的 context_file
+        3. 環境變數 AI_TRANSLATOR_CONTEXT
+        4. 自動收集專案文件：
+           - .context.md / .context.txt / CONTEXT.md
+           - CLAUDE.md（專案描述）
+           - README.md（專案說明）
+           - docs/*.md（文件目錄）
+        """
+        collected_context = []
+
         # 優先使用直接提供的 context
         if context:
-            return context
+            collected_context.append(context)
 
-        # 從檔案載入
+        # 從指定檔案載入
         if context_file:
             context_path = Path(context_file)
             if context_path.exists():
-                return context_path.read_text(encoding='utf-8')
+                collected_context.append(f"# From {context_file}\n{context_path.read_text(encoding='utf-8')}")
 
         # 從環境變數載入
         env_context = os.environ.get('AI_TRANSLATOR_CONTEXT')
         if env_context:
-            return env_context
+            collected_context.append(env_context)
 
-        # 自動搜尋 context 檔案
+        # 自動搜尋專案 context 檔案
+        cwd = Path.cwd()
+
+        # 專用 context 檔案（優先）
         for pattern in ['.context.md', '.context.txt', 'CONTEXT.md', 'context.md']:
-            context_path = Path.cwd() / pattern
+            context_path = cwd / pattern
             if context_path.exists():
-                return context_path.read_text(encoding='utf-8')
+                content = context_path.read_text(encoding='utf-8')
+                collected_context.append(f"# From {pattern}\n{content}")
+                break  # 只載入一個專用 context 檔
 
-        return None
+        # CLAUDE.md（通常包含專案描述和術語）
+        claude_md = cwd / 'CLAUDE.md'
+        if claude_md.exists():
+            content = claude_md.read_text(encoding='utf-8')
+            # 只取前 2000 字作為 context，避免太長
+            if len(content) > 2000:
+                content = content[:2000] + "\n...(truncated)"
+            collected_context.append(f"# From CLAUDE.md (project description)\n{content}")
+
+        # README.md
+        readme_md = cwd / 'README.md'
+        if readme_md.exists():
+            content = readme_md.read_text(encoding='utf-8')
+            # 只取前 1500 字
+            if len(content) > 1500:
+                content = content[:1500] + "\n...(truncated)"
+            collected_context.append(f"# From README.md\n{content}")
+
+        # docs/ 目錄下的 markdown 檔案
+        docs_dir = cwd / 'docs'
+        if docs_dir.exists() and docs_dir.is_dir():
+            docs_content = []
+            for md_file in sorted(docs_dir.glob('*.md'))[:5]:  # 最多 5 個檔案
+                content = md_file.read_text(encoding='utf-8')
+                # 每個檔案取前 500 字
+                if len(content) > 500:
+                    content = content[:500] + "\n...(truncated)"
+                docs_content.append(f"## {md_file.name}\n{content}")
+            if docs_content:
+                collected_context.append(f"# From docs/\n" + "\n\n".join(docs_content))
+
+        return "\n\n---\n\n".join(collected_context) if collected_context else None
 
     def _format_output(self, text: str) -> str:
         """格式化輸出"""
