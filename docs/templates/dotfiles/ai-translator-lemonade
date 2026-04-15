@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG_DIR="$HOME/.config/ai-translator"
+LOADER="$CONFIG_DIR/load-env.sh"
+
+if [ -r "$LOADER" ]; then
+  # shellcheck disable=SC1090
+  . "$LOADER"
+fi
+
+: "${AI_TRANSLATOR_PROVIDER:=http}"
+: "${AI_TRANSLATOR_PROTOCOL:=openai}"
+: "${AI_TRANSLATOR_MODEL:=user.gemma-4-26B-A4B-it-GGUF}"
+
+export AI_TRANSLATOR_PROVIDER
+export AI_TRANSLATOR_PROTOCOL
+export AI_TRANSLATOR_MODEL
+
+exec ai-translator "$@"

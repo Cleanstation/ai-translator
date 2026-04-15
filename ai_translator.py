@@ -463,12 +463,14 @@ class Translator:
                 collected_context.append(f"# From {pattern}\n{content}")
                 break
 
-        claude_md = cwd / "CLAUDE.md"
-        if claude_md.exists():
-            content = claude_md.read_text(encoding="utf-8")
+        for agent_doc_name in ["AGENTS.md", "AGENTS.local.md", "CLAUDE.local.md", "CLAUDE.md"]:
+            agent_doc = cwd / agent_doc_name
+            if not agent_doc.exists():
+                continue
+            content = agent_doc.read_text(encoding="utf-8")
             if len(content) > 2000:
                 content = content[:2000] + "\n...(truncated)"
-            collected_context.append(f"# From CLAUDE.md (project description)\n{content}")
+            collected_context.append(f"# From {agent_doc_name} (project guidance)\n{content}")
 
         readme_md = cwd / "README.md"
         if readme_md.exists():

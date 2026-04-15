@@ -78,3 +78,14 @@ def test_translator_cache_distinguishes_provider_endpoints(tmp_path: Path):
     assert result2 == {"電源板": "board-power"}
     assert len(provider1.prompts) == 1
     assert len(provider2.prompts) == 1
+
+
+def test_translator_loads_agents_md_as_project_context(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "AGENTS.md").write_text("# Project Agent Notes\nImportant glossary", encoding="utf-8")
+
+    translator = Translator(cache_dir=tmp_path / ".cache", provider=FakeProvider('{"測試": "test"}'))
+
+    assert translator.context is not None
+    assert "# From AGENTS.md" in translator.context
+    assert "Important glossary" in translator.context

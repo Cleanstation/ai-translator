@@ -1,3 +1,10 @@
+# Local agent/operator files
+CLAUDE.md
+AGENTS.local.md
+CLAUDE.local.md
+.claude/
+.hermes/
+
 # Python
 __pycache__/
 *.py[cod]

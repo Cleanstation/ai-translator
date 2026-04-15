@@ -141,6 +141,15 @@ translator = Translator(provider=provider)
 print(translator.translate("電源板測試"))
 ```
 
+## Documentation
+
+Public-safe supporting documents live under `docs/`:
+
+- `docs/README.md` — documentation index
+- `docs/architecture/` — architecture notes
+- `docs/integration/` — generic downstream integration guidance
+- `docs/templates/` — public-safe templates and examples
+
 ## 命令列選項
 
 | 選項 | 說明 |
@@ -190,7 +199,7 @@ print(translator.translate("電源板測試"))
 2. `--context-file` 指定的檔案
 3. 環境變數 `AI_TRANSLATOR_CONTEXT`
 4. 工作目錄下的 `.context.md`、`.context.txt`、`CONTEXT.md`、`context.md`
-5. 工作目錄下的 `CLAUDE.md`、`README.md`、`docs/*.md` 片段
+5. 工作目錄下的 `AGENTS.md`、`README.md`、`docs/*.md` 片段
 
 ## 快取
 
