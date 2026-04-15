@@ -1,7 +1,7 @@
 [project]
 name = "ai-translator"
 version = "0.1.0"
-description = "AI 翻譯工具 - 使用 Claude 將中文翻譯為英文，支援批次翻譯、快取和多種輸出格式"
+description = "AI 翻譯工具 - 支援 Claude CLI 與 HTTP LLM provider，可將中文翻譯為簡短英文名稱，支援批次翻譯、快取和多種輸出格式"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
@@ -9,7 +9,12 @@ license = {text = "MIT"}
 authors = [
     {name = "Cleanstation"}
 ]
-keywords = ["ai", "translator", "chinese", "english", "claude"]
+keywords = ["ai", "translator", "chinese", "english", "claude", "openai", "anthropic", "lemonade"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
 
 [project.scripts]
 ai-translator = "ai_translator:main"
